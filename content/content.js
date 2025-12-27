@@ -22,8 +22,8 @@ function createDownloadButton() {
   button.id = 'coverflex-csv-download-btn';
   button.className = 'relative flex cursor-pointer items-center justify-center overflow-hidden rounded-md text-center outline-0 transition-all duration-150 ease-out bg-neutral10 min-h-[3.2rem] px-md py-xs';
   button.style.cssText = `
-    background: #f5f5f5;
-    border: 1px solid #e0e0e0;
+    background: #fde5d8;
+    border: 2px solid #f88572;
     border-radius: 8px;
     padding: 8px 16px;
     font-family: inherit;
@@ -39,20 +39,20 @@ function createDownloadButton() {
 
   // Download icon SVG
   button.innerHTML = `
-    <svg viewBox="0 0 512 512" height="14" width="14" style="fill: #333e4a;">
+    <svg viewBox="0 0 512 512" height="14" width="14" style="fill: #f88572;">
       <path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 242.7-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7 288 32zM64 352c-35.3 0-64 28.7-64 64l0 32c0 35.3 28.7 64 64 64l384 0c35.3 0 64-28.7 64-64l0-32c0-35.3-28.7-64-64-64l-101.5 0-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352 64 352zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/>
     </svg>
     <span>Download CSV</span>
   `;
 
   button.addEventListener('mouseenter', () => {
-    button.style.background = '#e8e8e8';
-    button.style.borderColor = '#333e4a';
+    button.style.background = '#fcd4c0';
+    button.style.borderColor = '#f66b56';
   });
 
   button.addEventListener('mouseleave', () => {
-    button.style.background = '#f5f5f5';
-    button.style.borderColor = '#e0e0e0';
+    button.style.background = '#fde5d8';
+    button.style.borderColor = '#f88572';
   });
 
   button.addEventListener('click', handleDownloadClick);
@@ -248,16 +248,15 @@ function showDownloadModal() {
       </label>
     </div>
 
-    <div style="display: flex; gap: 8px;">
-      <button id="modal-download-csv"
-        style="flex: 1; padding: 12px; border: none; border-radius: 8px; background: #333e4a; color: white; font-size: 14px; font-weight: 600; cursor: pointer;">
-        Download CSV
-      </button>
-      <button id="modal-download-budgetbakers"
-        style="flex: 1; padding: 12px; border: 1px solid #333e4a; border-radius: 8px; background: white; color: #333e4a; font-size: 14px; font-weight: 600; cursor: pointer;">
-        BudgetBakers
-      </button>
-    </div>
+    <button id="modal-download-csv"
+      style="width: 100%; padding: 12px; border: none; border-radius: 8px; background: #333e4a; color: white; font-size: 14px; font-weight: 600; cursor: pointer;">
+      Download CSV
+    </button>
+
+    <button id="modal-download-budgetbakers"
+      style="width: 100%; margin-top: 8px; padding: 12px; border: 1px solid #333e4a; border-radius: 8px; background: white; color: #333e4a; font-size: 14px; font-weight: 600; cursor: pointer;">
+      CSV for BudgetBakers Wallet
+    </button>
 
     <button id="modal-close"
       style="width: 100%; margin-top: 12px; padding: 10px; border: none; background: transparent; color: #5f7287; font-size: 13px; cursor: pointer;">
