@@ -2,6 +2,12 @@
 
 Chrome extension to download Coverflex transactions as CSV files.
 
+## Download
+
+**[📥 Download Latest Release](https://github.com/ilbonte/coverflex-downloader/releases/latest)**
+
+> **Note**: This extension is currently under review for the Chrome Web Store. In the meantime, you can install it manually following the instructions below.
+
 ## Features
 
 - **Two CSV formats**: Standard (complete data) or BudgetBakers-optimized
@@ -11,13 +17,31 @@ Chrome extension to download Coverflex transactions as CSV files.
 
 ## Installation
 
-### From Chrome Web Store
-Coming soon
+### Manual Installation (Recommended for now)
 
-### Development
+1. **Download the extension**
+   - Go to the [Releases page](https://github.com/ilbonte/coverflex-downloader/releases/latest)
+   - Download the `.zip` file (e.g., `coverflex-downloader-v1.0.0.zip`)
+
+2. **Extract the archive**
+   - Unzip the downloaded file to a folder on your computer
+   - Remember the location of this folder
+
+3. **Install in Chrome**
+   - Open Chrome and navigate to `chrome://extensions/`
+   - Enable **"Developer mode"** (toggle in the top-right corner)
+   - Click **"Load unpacked"**
+   - Select the folder where you extracted the extension
+   - The extension should now appear in your extensions list
+
+### From Chrome Web Store
+Coming soon (currently under review)
+
+### For Development
 ```bash
-git clone https://github.com/yourusername/coverflex-downloader.git
+git clone https://github.com/ilbonte/coverflex-downloader.git
 cd coverflex-downloader
+npm install
 ```
 
 Load in Chrome:
@@ -68,9 +92,8 @@ npm run test:coverage # Coverage report
 ## Permissions
 
 - `storage` - Store auth token locally
-- `activeTab` - Access current tab
-- `webRequest` - Capture auth token from Coverflex
-- Host permissions for `my.coverflex.com` and `menhir-api.coverflex.com`
+- `webRequest` - Capture auth token from Coverflex API requests
+- Host permissions for `my.coverflex.com` and `menhir-api.coverflex.com` - Access Coverflex pages and API
 
 ## License
 
