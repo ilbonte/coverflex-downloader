@@ -1,11 +1,10 @@
 {
   "manifest_version": 3,
   "name": "Coverflex Transaction Downloader",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Download Coverflex transactions as CSV",
   "permissions": [
     "storage",
-    "activeTab",
     "webRequest"
   ],
   "host_permissions": [
@@ -18,8 +17,12 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://my.coverflex.com/*activity*"],
-      "js": ["content/content.js"],
+      "matches": [
+        "https://my.coverflex.com/*activity*"
+      ],
+      "js": [
+        "content/content.js"
+      ],
       "run_at": "document_idle"
     }
   ],
@@ -38,8 +41,12 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["utils/*.js"],
-      "matches": ["https://my.coverflex.com/*"]
+      "resources": [
+        "utils/*.js"
+      ],
+      "matches": [
+        "https://my.coverflex.com/*"
+      ]
     }
   ]
 }

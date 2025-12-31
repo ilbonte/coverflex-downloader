@@ -44,7 +44,6 @@ These are the same services you already use when accessing Coverflex normally.
 The extension requires the following permissions:
 
 - **storage:** To save your authentication token locally in your browser
-- **activeTab:** To access the current tab when you click the extension icon
 - **webRequest:** To optionally intercept the authentication token from API requests (fallback method)
 - **Host permissions for `my.coverflex.com`:** To inject the download button on the Coverflex activity page and access localStorage
 - **Host permissions for `menhir-api.coverflex.com`:** To fetch your transaction data from Coverflex's API
