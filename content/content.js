@@ -459,21 +459,50 @@ function injectButton() {
   }
 }
 
+// Check if we're on an activity page
+function isActivityPage() {
+  const path = window.location.pathname;
+  return path.includes('/activity');
+}
+
 // Initialize
 captureToken();
 
-// Wait for DOM and inject button
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', injectButton);
-} else {
-  injectButton();
-}
-
-// Also observe for SPA navigation
-const observer = new MutationObserver(() => {
-  if (window.location.pathname.includes('/benefits/activity')) {
+// Wait for DOM and inject button (only on activity pages)
+function tryInjectButton() {
+  if (isActivityPage()) {
     injectButton();
   }
-});
+}
 
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', tryInjectButton);
+} else {
+  tryInjectButton();
+}
+
+// Debounce to avoid too many injection attempts
+let debounceTimer = null;
+function debouncedInjectButton() {
+  if (debounceTimer) clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    if (isActivityPage()) {
+      injectButton();
+    }
+  }, 100);
+}
+
+// Observe for SPA navigation (DOM changes)
+const observer = new MutationObserver(debouncedInjectButton);
 observer.observe(document.body, { childList: true, subtree: true });
+
+// Also listen for SPA navigation via History API
+let lastPathname = window.location.pathname;
+setInterval(() => {
+  if (window.location.pathname !== lastPathname) {
+    lastPathname = window.location.pathname;
+    if (isActivityPage()) {
+      injectButton();
+    }
+  }
+}, 500);
