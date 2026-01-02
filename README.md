@@ -5,11 +5,6 @@ Chrome extension to download Coverflex transactions as CSV files.
 ![alt text](image.png)
 
 
-## Download
-
-**[📥 Download Latest Release](https://github.com/ilbonte/coverflex-downloader/releases/latest)**
-
-> **Note**: This extension is currently under review for the Chrome Web Store. In the meantime, you can install it manually following the instructions below.
 
 ## Features
 
@@ -20,7 +15,12 @@ Chrome extension to download Coverflex transactions as CSV files.
 
 ## Installation
 
-### Manual Installation (Recommended for now)
+### From Chrome Web Store
+
+Visit the [Chrome Web Store page](https://chromewebstore.google.com/detail/coverflex-transaction-dow/liampbeldpbcnnokajmfeojfcnolgnfd
+) and press Add to Chrome
+
+### Manual Installation 
 
 1. **Download the extension**
    - Go to the [Releases page](https://github.com/ilbonte/coverflex-downloader/releases/latest)
@@ -37,8 +37,6 @@ Chrome extension to download Coverflex transactions as CSV files.
    - Select the folder where you extracted the extension
    - The extension should now appear in your extensions list
 
-### From Chrome Web Store
-Coming soon (currently under review)
 
 ### For Development
 ```bash
