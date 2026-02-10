@@ -57,10 +57,23 @@ function operationToBudgetBakersRow(op) {
   // BudgetBakers: negative for expenses (debit), positive for income
   const signedAmount = op.is_debit ? `-${amount}` : amount;
 
+  // Payee Logic:
+  // 1. Merchant name (if valid)
+  // 2. Budget name (if available)
+  // 3. Description (fallback)
+  let payee = op.merchant_name;
+  if (!payee || payee.toLowerCase() === 'unknown') {
+    if (op.budget_employee?.budget?.name) {
+      payee = op.budget_employee.budget.name;
+    } else {
+      payee = op.description || '';
+    }
+  }
+
   return [
     formatDateBudgetBakers(op.executed_at),  // Date (DD/MM/YYYY)
     signedAmount,                             // Amount (with sign on left)
-    op.merchant_name || '',                   // Payee (merchant)
+    payee,                                    // Payee (merchant)
     getNote(op),                              // Note (description)
     op.amount?.currency || 'EUR'              // Currency
   ];

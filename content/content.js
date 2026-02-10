@@ -234,6 +234,26 @@ function showDownloadModal() {
         style="width: 100%; padding: 10px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px;">
     </div>
 
+    <div style="margin: 16px 0 12px; height: 1px; background-color: #e0e0e0;"></div>
+    <label style="display: block; font-size: 11px; text-transform: uppercase; font-weight: 600; color: #5f7287; margin-bottom: 8px; letter-spacing: 0.5px;">Transaction Types</label>
+
+    <div style="margin-bottom: 12px;">
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; color: #333e4a;">
+        <input type="checkbox" id="modal-include-welfare" checked style="width: 16px; height: 16px; cursor: pointer;">
+        <span>Welfare / Benefits</span>
+      </label>
+    </div>
+
+    <div style="margin-bottom: 16px;">
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; color: #333e4a;">
+        <input type="checkbox" id="modal-include-meals" checked style="width: 16px; height: 16px; cursor: pointer;">
+        <span>Meal Vouchers</span>
+      </label>
+    </div>
+
+    <div style="margin: 16px 0 12px; height: 1px; background-color: #e0e0e0;"></div>
+    <label style="display: block; font-size: 11px; text-transform: uppercase; font-weight: 600; color: #5f7287; margin-bottom: 8px; letter-spacing: 0.5px;">Options</label>
+
     <div style="margin-bottom: 16px;">
       <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; color: #333e4a;">
         <input type="checkbox" id="modal-include-topups" checked style="width: 16px; height: 16px; cursor: pointer;">
@@ -293,6 +313,8 @@ async function handleModalDownload(format) {
   const toDateInput = document.getElementById('modal-to-date');
   const includeTopupsCheckbox = document.getElementById('modal-include-topups');
   const includeRejectedCheckbox = document.getElementById('modal-include-rejected');
+  const includeWelfareCheckbox = document.getElementById('modal-include-welfare');
+  const includeMealsCheckbox = document.getElementById('modal-include-meals');
 
   const fromDate = fromDateInput.value;
   const toDate = toDateInput.value;
@@ -329,6 +351,8 @@ async function handleModalDownload(format) {
     const data = response.data;
     const includeTopups = includeTopupsCheckbox.checked;
     const includeRejected = format === 'csv' ? includeRejectedCheckbox.checked : false;
+    const includeWelfare = includeWelfareCheckbox.checked;
+    const includeMeals = includeMealsCheckbox.checked;
 
     const filteredData = {
       ...data,
@@ -337,6 +361,11 @@ async function handleModalDownload(format) {
         list: data.operations.list.filter(op => {
           if (!includeTopups && op.type === 'topup') return false;
           if (!includeRejected && op.status === 'rejected') return false;
+
+          const pocketType = op.pocket?.type;
+          if (pocketType === 'benefits' && !includeWelfare) return false;
+          if (pocketType === 'meals' && !includeMeals) return false;
+
           return true;
         })
       }

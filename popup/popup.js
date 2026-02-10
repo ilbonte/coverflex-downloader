@@ -7,6 +7,8 @@ import { formatDateRange } from '../utils/api.js';
 // DOM elements
 const fromDateInput = document.getElementById('fromDate');
 const toDateInput = document.getElementById('toDate');
+const includeWelfareCheckbox = document.getElementById('includeWelfare');
+const includeMealsCheckbox = document.getElementById('includeMeals');
 const includeTopupsCheckbox = document.getElementById('includeTopups');
 const includeRejectedCheckbox = document.getElementById('includeRejected');
 const downloadBtn = document.getElementById('downloadBtn');
@@ -86,6 +88,8 @@ async function handleDownload() {
     // Filter operations based on checkboxes
     const includeTopups = includeTopupsCheckbox.checked;
     const includeRejected = includeRejectedCheckbox.checked;
+    const includeWelfare = includeWelfareCheckbox.checked;
+    const includeMeals = includeMealsCheckbox.checked;
 
     const filteredData = {
       ...data,
@@ -96,6 +100,12 @@ async function handleDownload() {
           if (!includeTopups && op.type === 'topup') return false;
           // Filter out rejected if not included
           if (!includeRejected && op.status === 'rejected') return false;
+
+          // Filter by transaction type
+          const pocketType = op.pocket?.type;
+          if (pocketType === 'benefits' && !includeWelfare) return false;
+          if (pocketType === 'meals' && !includeMeals) return false;
+
           return true;
         })
       }
@@ -161,6 +171,8 @@ async function handleBudgetBakersDownload() {
 
     // BudgetBakers: always exclude rejected, optionally include topups
     const includeTopups = includeTopupsCheckbox.checked;
+    const includeWelfare = includeWelfareCheckbox.checked;
+    const includeMeals = includeMealsCheckbox.checked;
 
     const filteredData = {
       ...data,
@@ -171,6 +183,12 @@ async function handleBudgetBakersDownload() {
           if (op.status === 'rejected') return false;
           // Filter out topups if not included
           if (!includeTopups && op.type === 'topup') return false;
+
+          // Filter by transaction type
+          const pocketType = op.pocket?.type;
+          if (pocketType === 'benefits' && !includeWelfare) return false;
+          if (pocketType === 'meals' && !includeMeals) return false;
+
           return true;
         })
       }

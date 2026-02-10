@@ -41,34 +41,95 @@ async function fetchOperations(fromDate, toDate) {
     throw new Error('No authentication token available. Please visit the Coverflex activity page first.');
   }
 
-  const params = new URLSearchParams({
-    'pagination': 'no',
-    'usage': 'all',
-    'filters[executed_from]': fromDate,
-    'filters[executed_to]': toDate
-  });
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  };
 
-  const url = `https://menhir-api.coverflex.com/api/employee/operations?${params}`;
+  try {
+    const results = {
+      operations: {
+        list: []
+      }
+    };
 
-  const response = await fetch(url, {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+    // 1. Fetch Welfare (Benefits) Operations
+    const welfareParams = new URLSearchParams({
+      'pagination': 'no',
+      'usage': 'all',
+      'filters[executed_from]': fromDate,
+      'filters[executed_to]': toDate
+    });
+
+    const welfareUrl = `https://menhir-api.coverflex.com/api/employee/operations?${welfareParams}`;
+    const welfareResponse = await fetch(welfareUrl, { method: 'GET', headers });
+
+    if (welfareResponse.ok) {
+      const welfareData = await welfareResponse.json();
+      if (welfareData.operations?.list) {
+        // Tag them as benefits
+        const welfareList = welfareData.operations.list.map(op => ({
+          ...op,
+          pocket: { ...op.pocket, type: 'benefits' } // Ensure type is set
+        }));
+        results.operations.list.push(...welfareList);
+      }
+    } else if (welfareResponse.status === 401) {
+      throw new Error('Authentication expired');
     }
-  });
 
-  if (!response.ok) {
-    if (response.status === 401) {
-      // Token expired, clear it
+    // 2. Fetch Pockets to find Meal ID
+    const pocketsUrl = `https://menhir-api.coverflex.com/api/employee/pockets`;
+    const pocketsResponse = await fetch(pocketsUrl, { method: 'GET', headers });
+
+    if (pocketsResponse.ok) {
+      const pocketsData = await pocketsResponse.json();
+      const mealPocket = pocketsData.pockets?.find(p => p.type === 'meals');
+
+      if (mealPocket) {
+        // 3. Fetch Meal Movements
+        const mealsParams = new URLSearchParams({
+          'pocket_id': mealPocket.id,
+          'pagination': 'no',
+          'filters[movement_from]': fromDate.split('T')[0], // API expects YYYY-MM-DD
+          'filters[movement_to]': toDate.split('T')[0]
+        });
+
+        const mealsUrl = `https://menhir-api.coverflex.com/api/employee/movements?${mealsParams}`;
+        const mealsResponse = await fetch(mealsUrl, { method: 'GET', headers });
+
+        if (mealsResponse.ok) {
+          const mealsData = await mealsResponse.json();
+          if (mealsData.movements?.list) {
+            // Tag them as meals and normalize specific fields if necessary
+            const mealsList = mealsData.movements.list.map(m => ({
+              ...m,
+              pocket: { ...m.pocket, type: 'meals' }
+            }));
+            results.operations.list.push(...mealsList);
+          }
+        }
+      }
+    }
+
+    if (results.operations.list.length === 0 && !welfareResponse.ok) {
+      // If we got nothing and the main call failed, throw the error
+      throw new Error(`API error: ${welfareResponse.status}`);
+    }
+
+    // Sort by executed_at descending
+    results.operations.list.sort((a, b) => new Date(b.executed_at) - new Date(a.executed_at));
+
+    return results;
+
+  } catch (error) {
+    if (error.message === 'Authentication expired') {
       cachedToken = null;
       await chrome.storage.local.remove('authToken');
       throw new Error('Authentication expired. Please log in to Coverflex and try again.');
     }
-    throw new Error(`API error: ${response.status}`);
+    throw error;
   }
-
-  return response.json();
 }
 
 // Intercept requests to capture auth token from Coverflex's own API calls

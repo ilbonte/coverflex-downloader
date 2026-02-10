@@ -40,12 +40,25 @@ function operationToRow(op) {
   const amount = op.amount?.amount ? centsToEuros(op.amount.amount) : '';
   const signedAmount = op.is_debit && amount ? `-${amount}` : amount;
 
+  // Payee Logic:
+  // 1. Merchant name (if valid)
+  // 2. Budget name (if available)
+  // 3. Description (fallback)
+  let payee = op.merchant_name;
+  if (!payee || payee.toLowerCase() === 'unknown') {
+    if (op.budget_employee?.budget?.name) {
+      payee = op.budget_employee.budget.name;
+    } else {
+      payee = op.description || '';
+    }
+  }
+
   return [
     op.id || '',
     formatDate(op.executed_at),
     op.type || '',
     op.status || '',
-    op.merchant_name || '',
+    payee,
     signedAmount,
     op.amount?.currency || '',
     op.is_debit ? 'true' : 'false',

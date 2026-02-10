@@ -111,6 +111,58 @@ describe('CSV Conversion', () => {
       expect(csv).toBeTruthy();
       expect(csv).toContain('50.00');
     });
+
+    test('should process meal voucher transactions correctly', () => {
+      const mealData = {
+        operations: {
+          list: [{
+            id: "meal-1",
+            status: "confirmed",
+            type: "purchase",
+            amount: { currency: "EUR", amount: 750 },
+            is_debit: true,
+            executed_at: "2026-01-28T12:58:40.518000Z",
+            merchant_name: "RESTAURANT",
+            category_slug: "meals",
+            pocket: { type: "meals" }
+          }]
+        }
+      };
+
+      const csv = operationsToCSV(mealData);
+      expect(csv).toContain('RESTAURANT');
+      expect(csv).toContain('7.50');
+      expect(csv).toContain('meals');
+    });
+
+    test('should fallback to budget name or description if merchant is missing', () => {
+      const fallbackData = {
+        operations: {
+          list: [
+            {
+              id: "fallback-1",
+              executed_at: "2026-01-01T12:00:00Z",
+              merchant_name: null,
+              budget_employee: { budget: { name: "Green Transportation" } },
+              amount: { currency: "EUR", amount: 3000 },
+              is_debit: true
+            },
+            {
+              id: "fallback-2",
+              executed_at: "2026-01-02T12:00:00Z",
+              merchant_name: "unknown",
+              description: "Backup Description",
+              amount: { currency: "EUR", amount: 2000 },
+              is_debit: true
+            }
+          ]
+        }
+      };
+
+      const csv = operationsToCSV(fallbackData);
+      expect(csv).toContain('Green Transportation');
+      expect(csv).toContain('Backup Description');
+    });
   });
 
   describe('generateFilename', () => {

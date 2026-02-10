@@ -165,3 +165,19 @@ input[type="date"]:focus {
   cursor: pointer;
   accent-color: #333e4a;
 }
+
+.divider {
+  height: 1px;
+  background-color: #e0e0e0;
+  margin: 16px 0 12px;
+}
+
+.section-label {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #5f7287;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
